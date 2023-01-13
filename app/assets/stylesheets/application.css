@@ -1,0 +1,86 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS (and SCSS, if configured) file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+#container {
+  height: auto;
+  width: auto;
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+
+#product-svg {
+  position: relative;
+  z-index: 2;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  mix-blend-mode: multiply;
+}
+
+path {
+    fill: white;
+    stroke: #646464;
+    stroke-width: 1px;
+}
+
+#background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 200px;
+  width: 200px;
+  height: auto;
+  z-index: 1;
+}
+
+.colors {
+  display: flex;
+  position: fixed;
+  bottom: 2em;
+  right: 2em;
+  z-index: 3;
+}
+
+.color {
+  height: 36px;
+  width: 36px;
+  margin-left: 0.5em;
+  border-radius: 18px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  border: 2px solid #aaa;
+  cursor: pointer;
+}
+
+.highlight {
+  stroke-width: 10px;
+  stroke: #000;
+}
+
+
+.checkmark {
+    border: 3px solid rgb(0, 0, 0);
+}
