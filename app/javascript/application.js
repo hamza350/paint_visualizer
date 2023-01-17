@@ -3,48 +3,71 @@ import "@hotwired/turbo-rails"
 import "controllers"
 
 
-let overlays= [];
-let hex;
-let colors=[];
-document.querySelectorAll('#product-a, #product-b, #product-c').forEach(function(path) {
-  path.onclick = chooseProduct;
-})
+// let overlays= [];
+// let hex;
+// let colors=[];
+// document.querySelectorAll('#product-a, #product-b, #product-c').forEach(function(path) {
+//   path.onclick = chooseProduct;
+// })
 
-document.querySelectorAll('#product-a, #product-b, #product-c').forEach(function(path) {
-    path.onmouseover = hoverProduct;
-})
+// document.querySelectorAll('#product-a, #product-b, #product-c').forEach(function(path) {
+//     path.onmouseover = hoverProduct;
+// })
 
-document.querySelectorAll('#product-a, #product-b, #product-c').forEach(function(path) {
-    path.onmouseout = removeHoverProduct;
-})
+// document.querySelectorAll('#product-a, #product-b, #product-c').forEach(function(path) {
+//     path.onmouseout = removeHoverProduct;
+// })
 
-function removeHoverProduct(e) {
-    if (overlays)  for (const overlay of overlays) { overlay.classList.remove('highlight') }
-}
+// function removeHoverProduct(e) {
+//     if (overlays)  for (const overlay of overlays) { overlay.classList.remove('highlight') }
+// }
+
+// function hoverProduct(e) {
+//     if (overlays)  for (const overlay of overlays) { overlay.classList.remove('highlight') }
+//     overlays = document.querySelectorAll("[id=" + e.target.id + "]");
+//     for (const overlay of overlays) { overlay.classList.add('highlight') }
+// }
+
+// function chooseProduct(e) {
+//   if (overlays)  for (const overlay of overlays) { overlay.classList.remove('highlight') }
+//   overlays = document.querySelectorAll("[id=" + e.target.id + "]");
+//   for (const overlay of overlays) { overlay.classList.add('highlight') }
+//   if (!hex) { alert('Please choose color first')}
+//   if (overlays ) for (const overlay of overlays) { overlay.style.fill = hex }
+// }
+
+
+// colors = document.getElementsByClassName("color");
+// for (var i = 0; i < colors.length; i++) {
+//   colors[i].onclick = changeColor;
+// }
+
+// function changeColor(e) {
+//   if (hex) for (const color of colors) { color.classList.remove('checkmark') }
+//   hex = e.target.getAttribute("data-hex");
+//   e.target.classList.add('checkmark')
+// //   if (overlays ) for (const overlay of overlays) { overlay.style.fill = hex }
+// }
+
 
 function hoverProduct(e) {
-    if (overlays)  for (const overlay of overlays) { overlay.classList.remove('highlight') }
-    overlays = document.querySelectorAll("[id=" + e.target.id + "]");
-    for (const overlay of overlays) { overlay.classList.add('highlight') }
+    // if (overlays)  for (const overlay of overlays) { overlay.classList.remove('highlight') }
+    // overlays = document.querySelectorAll("[id=" + e.target.id + "]");
+    // for (const overlay of overlays) { overlay.classList.add('highlight') }
+    e.target.classList.add('highlight')
 }
 
-function chooseProduct(e) {
-  if (overlays)  for (const overlay of overlays) { overlay.classList.remove('highlight') }
-  overlays = document.querySelectorAll("[id=" + e.target.id + "]");
-  for (const overlay of overlays) { overlay.classList.add('highlight') }
-  if (!hex) { alert('Please choose color first')}
-  if (overlays ) for (const overlay of overlays) { overlay.style.fill = hex }
-}
-
-
-colors = document.getElementsByClassName("color");
-for (var i = 0; i < colors.length; i++) {
-  colors[i].onclick = changeColor;
-}
-
-function changeColor(e) {
-  if (hex) for (const color of colors) { color.classList.remove('checkmark') }
-  hex = e.target.getAttribute("data-hex");
-  e.target.classList.add('checkmark')
-//   if (overlays ) for (const overlay of overlays) { overlay.style.fill = hex }
-}
+var c=document.getElementById("canvas");
+var ctx=c.getContext("2d");
+var imageObj1 = new Image();
+var imageObj2 = new Image();
+imageObj1.src = "assets/1.jpg"
+imageObj1.onload = function() {
+   ctx.drawImage(imageObj1, 0, 0, 328, 526);
+   imageObj2.src = "assets/2.png";
+   ctx.globalAlpha = 0.2;
+   imageObj2.onload = function() {
+      ctx.drawImage(imageObj2, 0, 0, 328, 526);
+      imageObj2.onmouseover = alert('hello');
+   }
+};
