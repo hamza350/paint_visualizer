@@ -4,8 +4,8 @@ import "controllers"
 
 
 // let overlays= [];
-// let hex;
-// let colors=[];
+let hex;
+let colors=[];
 // document.querySelectorAll('#product-a, #product-b, #product-c').forEach(function(path) {
 //   path.onclick = chooseProduct;
 // })
@@ -37,17 +37,17 @@ import "controllers"
 // }
 
 
-// colors = document.getElementsByClassName("color");
-// for (var i = 0; i < colors.length; i++) {
-//   colors[i].onclick = changeColor;
-// }
+colors = document.getElementsByClassName("color");
+for (var i = 0; i < colors.length; i++) {
+  colors[i].onclick = changeColor;
+}
 
-// function changeColor(e) {
-//   if (hex) for (const color of colors) { color.classList.remove('checkmark') }
-//   hex = e.target.getAttribute("data-hex");
-//   e.target.classList.add('checkmark')
+function changeColor(e) {
+  if (hex) for (const color of colors) { color.classList.remove('checkmark') }
+  hex = e.target.getAttribute("data-hex");
+  e.target.classList.add('checkmark')
 // //   if (overlays ) for (const overlay of overlays) { overlay.style.fill = hex }
-// }
+}
 
 
 function hoverProduct(e) {
@@ -76,59 +76,137 @@ function hexToRgb(color) {
 }
 
 
-var c=document.getElementById("canvas");
-var ctx=c.getContext("2d");
-const xOffset = 30, yOffset = 10, width = 270, height = 0;
-var imageObj1 = new Image();
-var imageObj2 = new Image();
-imageObj1.src = "assets/1.jpg"
-imageObj1.onload = function() {
-   ctx.drawImage(imageObj1, 0, 0, 328, 526);
-   imageObj2.src = "assets/2.png";
+// var c=document.getElementById("imagecanvas");
+// var ctx=c.getContext("2d");
+// var imageObj1 = new Image();
+// var imageObj2 = new Image();
+// imageObj1.src = "assets/1.jpg"
+// imageObj1.onload = function() {
+//    ctx.drawImage(imageObj1, 0, 0, 328, 526);
+// };
+  var canvas = document.getElementById("overlaycanvas");
+  var maskCanvas = document.getElementById("mask-canvas");
 
+  // Create new Image objects
+  var image = new Image();
+  image.src = "assets/1.jpg";
+  var maskData = new Image();
+  maskData.src = "assets/2.png";
 
-   imageObj2.onload = () => {
-    //Make new canvas for image
-        const imageCtx = document.createElement("canvas").getContext("2d");
-        const insideImage = new Image();
-        imageCtx.canvas.width = 328;
-        imageCtx.canvas.height = 526;
-        imageCtx.save();
-        imageCtx.fillStyle = 'yellow';
-        imageCtx.fillRect(0, 0, 328, 526);
-        //Here magic happend 
-        imageCtx.globalCompositeOperation = "destination-in";
-        imageCtx.drawImage(imageObj2,0,0,328,526);
-        // Then export our canvas to png image
-        insideImage.src = imageCtx.canvas.toDataURL("image/png");
-        insideImage.onload = () => {
-            ctx.drawImage(insideImage,(width/2)-(328/2)+xOffset,height*0.2,328,526);
-        }
-        //add event listener we need
-        imageCtx.canvas.addEventListener('mousemove', move, false);
-    }
-//    imageObj2.onload = function(e) {
-//     ctx.drawImage(imageObj2, 0, 0, 328, 526);
-//     var imageData = ctx.getImageData(0,0,328,526);
+  // Wait for the image and mask data to load
+  image.onload = maskData.onload = function() {
+    var ctx = canvas.getContext("2d");
+    var maskCtx = maskCanvas.getContext("2d");
 
-//     var data = imageData.data;
+    // Set the canvas size to match the image
+    canvas.width = image.width;
+    canvas.height = image.height;
+    maskCanvas.width = image.width;
+    maskCanvas.height = image.height;
+    maskCtx.globalAlpha = 0.1;
+    // Draw the mask data on the mask canvas
+    maskCtx.drawImage(maskData, 0, 0);
 
-//     // convert image to grayscale
-//     var rgbColor = hexToRgb('#FFFF00');
+    // Set the composite operation of the main canvas to "source-in"
+    maskCtx.globalCompositeOperation = "source-in";
 
-//     for(var p = 0, len = data.length; p < len; p+=4) {
-//         data[p + 0] = rgbColor.r;
-//         data[p + 1] = rgbColor.g;
-//         data[p + 2] = rgbColor.b;
-//     }
-//     ctx.putImageData(imageData, 0, 0);
-//    }
-};
-
-function move(e) {
-    var pos = getMousePos(canvas, e);
-    ctx.drawImage(img, -pos.x, -pos.y, img.width, img.height);
+    // Draw the mask canvas on top of the main canvas
+    ctx.drawImage(maskCanvas, 0, 0);
+    ctx.drawImage(image, 0, 0);
 }
+
+var isLighter = false;
+var isCliked = false;
+
+
+maskCanvas.addEventListener("click", function(event) {
+    var x = event.clientX;
+    var y = event.clientY;
+    var ctx = maskCanvas.getContext("2d");
+    var imageData = ctx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+    var pixelData = imageData.data;
+    var rgb = hexToRgb(hex);
+    for (var i = 0; i < pixelData.length; i += 4) {
+        if(pixelData[i+3] > 0) {
+            pixelData[i] = rgb.r;
+            pixelData[i+1] = rgb.g;
+            pixelData[i+2] = rgb.b;
+        }
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+    isCliked = true;
+});
+
+
+
+
+maskCanvas.addEventListener("mousemove", function(event) {
+    var x = event.clientX;
+    var y = event.clientY;
+    var ctx = maskCanvas.getContext("2d");
+    var pixelData = ctx.getImageData(x, y, 1, 1).data;
+    if(pixelData[3] > 0 && !isLighter) {
+        for (let index = 0; index < 5; index++) {
+            ctx.globalCompositeOperation = "lighter";
+            ctx.drawImage(maskCanvas, 0, 0);
+            ctx.drawImage(maskData, 0, 0); 
+        }
+        isLighter = true;
+    }
+    if(isLighter && pixelData[3] == 0 && !isCliked){
+        ctx.globalCompositeOperation = "source-in";
+        ctx.drawImage(maskData, 0, 0);
+        isLighter = false;
+    }
+});
+    
+// maskCanvas.addEventListener("mouseout", function() {
+// // Change the composite operation back to "source-in" when the mouse leaves the canvas
+// var ctx = maskCanvas.getContext("2d");
+// var pixelData = ctx.getImageData(x, y, 1, 1).data;
+// if(pixelData[3] == 0) {
+//     ctx.globalCompositeOperation = "source-in";
+//     ctx.drawImage(maskData, 0, 0);
+// }
+//     isLighter = false;
+// });
+// var c1=document.getElementById("overlaycanvas");
+// var ctx1=c1.getContext("2d");
+// var imageObj2 = new Image();
+// imageObj2.src = "assets/2.png"
+// imageObj2.onload = function() {
+// ctx1.strokeStyle = 'yellow'
+// ctx1.lineWidth = 5;
+// ctx1.strokeRect(0, 0, 328, 526);
+//         //Here magic happend 
+// ctx1.globalCompositeOperation = "destination-in";
+// ctx1.drawImage(imageObj2, 0, 0, 328, 526);
+
+// };
+
+// c1.addEventListener("mousemove", function(event){
+//     var x = event.clientX;
+//     var y = event.clientY;
+//     var pixelData = ctx1.getImageData(x, y, 1, 1).data;
+//     if(pixelData[3] > 0) {
+//     for (var i = 0; i <= 328; i += 50){
+//       for (var j = 0; j < 526; j += 50) {
+//         ctx1 .beginPath();
+//         ctx1.lineWidth = 5;
+//         ctx1.strokColor = 'black'
+//         ctx1.strokeRect(0, 0, 328, 526);
+//       }
+//     } 
+// }// end draw
+// });
+
+// function highlightimage() {
+//     ctx1.lineWidth = 20;
+//     ctx1.strokColor = 'black'
+//     ctx1.strokeRect(0, 0,328, 526);
+// }
+
 
 
 
