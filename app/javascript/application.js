@@ -92,6 +92,8 @@ function hexToRgb(color) {
   image.src = "assets/1.jpg";
   var maskData = new Image();
   maskData.src = "assets/2.png";
+  var maskData1 = new Image();
+  maskData1.src = "assets/3.png";
 
   // Wait for the image and mask data to load
   image.onload = maskData.onload = function() {
@@ -106,6 +108,8 @@ function hexToRgb(color) {
     maskCtx.globalAlpha = 0.1;
     // Draw the mask data on the mask canvas
     maskCtx.drawImage(maskData, 0, 0);
+    maskCtx.globalAlpha = 0.2;
+    maskCtx.drawImage(maskData1, 0, 0);
 
     // Set the composite operation of the main canvas to "source-in"
     maskCtx.globalCompositeOperation = "source-in";
@@ -117,36 +121,44 @@ function hexToRgb(color) {
 
 var isLighter = false;
 var isCliked = false;
-
+let prevColor = {r: 1, g: 3, b: 0};
 
 maskCanvas.addEventListener("click", function(event) {
     var x = event.clientX;
     var y = event.clientY;
     var ctx = maskCanvas.getContext("2d");
-    var imageData = ctx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
-    var pixelData = imageData.data;
-    var rgb = hexToRgb(hex);
-    for (var i = 0; i < pixelData.length; i += 4) {
-        if(pixelData[i+3] > 0) {
-            pixelData[i] = rgb.r;
-            pixelData[i+1] = rgb.g;
-            pixelData[i+2] = rgb.b;
+    var pixelData = ctx.getImageData(x, y, 1, 1).data;
+    // Check if the pixel at the click coordinates is part of the first image
+        // Get the image data of the entire canvas
+        var imageData = ctx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+        var pixels = imageData.data;
+        var rgb = hexToRgb(hex);
+        debugger
+        for (var i = 0; i < pixels.length; i += 4) {
+            // Check if the current pixel is part of the first image
+            if((pixels[i] === 7 && pixels[i + 1] === 7 && pixels[i + 2] === 7) || (pixels[i] == prevColor.r && pixels[i + 1] == prevColor.g && 
+                pixels[i + 2] == prevColor.b)) {
+                pixels[i] = rgb.r; //red
+                pixels[i + 1] = rgb.g; //green
+                pixels[i + 2] = rgb.b; //blue
+            }
+            if((pixels[i] === 10 && pixels[i + 1] === 10 && pixels[i + 2] === 10) || (pixels[i] == prevColor.r && pixels[i + 1] == prevColor.g && 
+                pixels[i + 2] == prevColor.b)) {
+                pixels[i] = rgb.r; //red
+                pixels[i + 1] = rgb.g; //green
+                pixels[i + 2] = rgb.b; //blue
+            }
         }
-    }
-
-    ctx.putImageData(imageData, 0, 0);
-    isCliked = true;
+        prevColor = rgb;
+        ctx.putImageData(imageData, 0, 0);
 });
-
-
-
 
 maskCanvas.addEventListener("mousemove", function(event) {
     var x = event.clientX;
     var y = event.clientY;
     var ctx = maskCanvas.getContext("2d");
     var pixelData = ctx.getImageData(x, y, 1, 1).data;
-    if(pixelData[3] > 0 && !isLighter) {
+    if(pixelData[3] == 26 && !isLighter) {
         for (let index = 0; index < 5; index++) {
             ctx.globalCompositeOperation = "lighter";
             ctx.drawImage(maskCanvas, 0, 0);
@@ -154,9 +166,18 @@ maskCanvas.addEventListener("mousemove", function(event) {
         }
         isLighter = true;
     }
+    if(pixelData[3] == 51 && !isLighter) {
+        for (let index = 0; index < 4; index++) {
+            ctx.globalCompositeOperation = "lighter";
+            ctx.drawImage(maskCanvas, 0, 0);
+            ctx.drawImage(maskData1, 0, 0); 
+        }
+        isLighter = true;
+    }
     if(isLighter && pixelData[3] == 0 && !isCliked){
         ctx.globalCompositeOperation = "source-in";
-        ctx.drawImage(maskData, 0, 0);
+        ctx.drawImage(maskData, 0, 0); 
+        ctx.drawImage(maskData1, 0, 0);
         isLighter = false;
     }
 });
