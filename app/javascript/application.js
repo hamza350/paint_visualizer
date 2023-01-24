@@ -96,7 +96,7 @@ function hexToRgb(color) {
   maskData1.src = "assets/3.png";
 
   // Wait for the image and mask data to load
-  image.onload = maskData.onload = function() {
+  image.onload = maskData.onload = maskData1.onload = function() {
     var ctx = canvas.getContext("2d");
     var maskCtx = maskCanvas.getContext("2d");
 
@@ -119,8 +119,11 @@ function hexToRgb(color) {
     ctx.drawImage(image, 0, 0);
 }
 
-var isLighter = false;
+var isFirstLighter = false;
+var isSecondLighter = false;
 var isCliked = false;
+var firstHover = false;
+var secondHover = false;
 let prevColor = {r: 1, g: 3, b: 0};
 
 maskCanvas.addEventListener("click", function(event) {
@@ -153,33 +156,83 @@ maskCanvas.addEventListener("click", function(event) {
         ctx.putImageData(imageData, 0, 0);
 });
 
+window.imagesHighlighted = [];
+
 maskCanvas.addEventListener("mousemove", function(event) {
     var x = event.clientX;
     var y = event.clientY;
     var ctx = maskCanvas.getContext("2d");
     var pixelData = ctx.getImageData(x, y, 1, 1).data;
-    if(pixelData[3] == 26 && !isLighter) {
+    console.log(pixelData);
+    if(pixelData[3] == 26 && !isFirstLighter) {
+        console.log('image1')
+        ctx.globalCompositeOperation = "source-in";
+        ctx.drawImage(image, 0, 0);
         for (let index = 0; index < 5; index++) {
             ctx.globalCompositeOperation = "lighter";
-            ctx.drawImage(maskCanvas, 0, 0);
             ctx.drawImage(maskData, 0, 0); 
         }
-        isLighter = true;
+        var exists = imagesHighlighted.filter(function (o) {
+            return o.hasOwnProperty('img1');
+        }).length > 0;
+        console.log(exists);
+        if(!exists) {
+            imagesHighlighted.push({img1: 'maskData'});
+        }
+        console.log(imagesHighlighted.length);
+        // if(imagesHighlighted.length > 0){
+        //     for (let index = 0; index < imagesHighlighted.length; index++) {
+        //         ctx.globalCompositeOperation = "lighter";
+        //         ctx.drawImage(maskData, 0, 0);
+        //     }
+            imagesHighlighted.pop({img2: 'maskData1'})
+        // }
+        isFirstLighter = true;
+        console.log('isFirstLighter');
+        console.log(isFirstLighter);
     }
-    if(pixelData[3] == 51 && !isLighter) {
+
+
+    if(pixelData[3] == 51 && !isSecondLighter) {
+        console.log('image2')
+        ctx.globalCompositeOperation = "source-in";
+        ctx.drawImage(image, 0, 0);
+
         for (let index = 0; index < 4; index++) {
             ctx.globalCompositeOperation = "lighter";
-            ctx.drawImage(maskCanvas, 0, 0);
             ctx.drawImage(maskData1, 0, 0); 
         }
-        isLighter = true;
+        var exists = imagesHighlighted.filter(function (o) {
+            return o.hasOwnProperty('img2');
+        }).length > 0;
+        if(!exists) imagesHighlighted.push({img2: 'maskData1'})
+        if(imagesHighlighted.length > 0){
+            console.log(imagesHighlighted.length)
+            imagesHighlighted.pop({img1: 'maskData'});
+            
+
+            // ctx.globalCompositeOperation = "lighter";
+            // ctx.drawImage(maskData1, 0, 0);
+            // for (let index = 0; index < imagesHighlighted.length; index++) {
+                
+            // }
+        }
+        isSecondLighter = true;
     }
-    if(isLighter && pixelData[3] == 0 && !isCliked){
-        ctx.globalCompositeOperation = "source-in";
-        ctx.drawImage(maskData, 0, 0); 
-        ctx.drawImage(maskData1, 0, 0);
-        isLighter = false;
-    }
+    // Object.values(imagesHighlighted[index])[0]
+    // if(isLighter && pixelData[3] == 0 && !isCliked){
+    //     ctx.globalCompositeOperation = "source-in";
+    //     ctx.drawImage(maskData, 0, 0); 
+    //     ctx.drawImage(maskData1, 0, 0); 
+    //     isLighter = false;
+    // }
+    // if(isLighter && pixelData[3] == 0 && !isCliked){
+    //     ctx.globalCompositeOperation = "source-in";
+    //     ctx.drawImage(maskData1, 0, 0);
+    //     ctx.globalCompositeOperation = "source-in";
+    //     ctx.drawImage(maskData, 0, 0); 
+    //     isLighter = false;
+    // }
 });
     
 // maskCanvas.addEventListener("mouseout", function() {
