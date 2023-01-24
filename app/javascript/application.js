@@ -121,9 +121,8 @@ function hexToRgb(color) {
 
 var isFirstLighter = false;
 var isSecondLighter = false;
-var isCliked = false;
-var firstHover = false;
-var secondHover = false;
+var isFirstCliked = false;
+var isSecondCliked = false;
 let prevColor = {r: 1, g: 3, b: 0};
 
 maskCanvas.addEventListener("click", function(event) {
@@ -135,17 +134,20 @@ maskCanvas.addEventListener("click", function(event) {
         // Get the image data of the entire canvas
         var imageData = ctx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
         var pixels = imageData.data;
+        if(!hex) alert('please select color first')
         var rgb = hexToRgb(hex);
         debugger
+        console.log(pixels)
+        console.log(imageData)
         for (var i = 0; i < pixels.length; i += 4) {
             // Check if the current pixel is part of the first image
-            if((pixels[i] === 7 && pixels[i + 1] === 7 && pixels[i + 2] === 7) || (pixels[i] == prevColor.r && pixels[i + 1] == prevColor.g && 
+            if((pixels[i + 3] === 153) || (pixels[i] == prevColor.r && pixels[i + 1] == prevColor.g && 
                 pixels[i + 2] == prevColor.b)) {
                 pixels[i] = rgb.r; //red
                 pixels[i + 1] = rgb.g; //green
                 pixels[i + 2] = rgb.b; //blue
             }
-            if((pixels[i] === 10 && pixels[i + 1] === 10 && pixels[i + 2] === 10) || (pixels[i] == prevColor.r && pixels[i + 1] == prevColor.g && 
+            if((pixels[i + 3] === 179) || (pixels[i] == prevColor.r && pixels[i + 1] == prevColor.g && 
                 pixels[i + 2] == prevColor.b)) {
                 pixels[i] = rgb.r; //red
                 pixels[i + 1] = rgb.g; //green
@@ -164,7 +166,7 @@ maskCanvas.addEventListener("mousemove", function(event) {
     var ctx = maskCanvas.getContext("2d");
     var mainCtx = canvas.getContext("2d");
     var pixelData = ctx.getImageData(x, y, 1, 1).data;
-    console.log(pixelData);
+    // console.log(pixelData);
     if(pixelData[3] == 26 && !isFirstLighter) {
         console.log('image1')
         var ctx = canvas.getContext("2d");
@@ -190,7 +192,7 @@ maskCanvas.addEventListener("mousemove", function(event) {
 
 
 
-        for (let index = 0; index < 5; index++) {
+        for (let index = 0; index < 3; index++) {
             maskCtx.globalCompositeOperation = "lighter";
             maskCtx.drawImage(maskData, 0, 0); 
         }
@@ -212,7 +214,7 @@ maskCanvas.addEventListener("mousemove", function(event) {
         // }
     }
 
-
+    console.log(isSecondLighter)
     if(pixelData[3] == 51 && !isSecondLighter) {
         console.log('image2')
         var ctx = canvas.getContext("2d");
@@ -240,7 +242,7 @@ maskCanvas.addEventListener("mousemove", function(event) {
 
 
 
-        for (let index = 0; index < 4; index++) {
+        for (let index = 0; index < 2; index++) {
             maskCtx.globalCompositeOperation = "lighter";
             maskCtx.drawImage(maskData1, 0, 0); 
         }
@@ -262,20 +264,30 @@ maskCanvas.addEventListener("mousemove", function(event) {
         //     // }
         // }
     }
-    // Object.values(imagesHighlighted[index])[0]
-    // if(isLighter && pixelData[3] == 0 && !isCliked){
-    //     ctx.globalCompositeOperation = "source-in";
-    //     ctx.drawImage(maskData, 0, 0); 
-    //     ctx.drawImage(maskData1, 0, 0); 
-    //     isLighter = false;
-    // }
-    // if(isLighter && pixelData[3] == 0 && !isCliked){
-    //     ctx.globalCompositeOperation = "source-in";
-    //     ctx.drawImage(maskData1, 0, 0);
-    //     ctx.globalCompositeOperation = "source-in";
-    //     ctx.drawImage(maskData, 0, 0); 
-    //     isLighter = false;
-    // }
+    if(pixelData[3] == 0){
+        var ctx = canvas.getContext("2d");
+        var maskCtx = maskCanvas.getContext("2d");
+    
+        // Set the canvas size to match the image
+        canvas.width = image.width;
+        canvas.height = image.height;
+        maskCanvas.width = image.width;
+        maskCanvas.height = image.height;
+        maskCtx.globalAlpha = 0.1;
+        // Draw the mask data on the mask canvas
+        maskCtx.drawImage(maskData, 0, 0);
+        maskCtx.globalAlpha = 0.2;
+        maskCtx.drawImage(maskData1, 0, 0);
+    
+        // Set the composite operation of the main canvas to "source-in"
+        maskCtx.globalCompositeOperation = "source-in";
+    
+        // Draw the mask canvas on top of the main canvas
+        ctx.drawImage(maskCanvas, 0, 0);
+        ctx.drawImage(image, 0, 0);
+        isFirstLighter = false;
+        isSecondLighter = false;
+    }
 });
     
 // maskCanvas.addEventListener("mouseout", function() {
