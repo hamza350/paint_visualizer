@@ -9,8 +9,8 @@ img2.src = 'assets/3.png'
 
 
 var images = [
-    {id: 1, img: img1},
-    {id: 2, img: img2}
+    {id: 1, img: img1, x: 10, y: 10},
+    {id: 2, img: img2, x: 50, y: 50}
 ];
 
 
@@ -44,35 +44,41 @@ images.forEach(function(image) {
         width: image.img.width,
         height: image.img.height
     });
-    var imageData = image.getImageData();
-    var hsv = new Konva.Filters.HSV();
-    hsv.apply(imageData);
-    image.setImageData(imageData);
     foregroundLayer.add(konvaImg);
 });
 
 stage.add(foregroundLayer);
 
-foregroundLayer.on('mouseover', function(evt) {
-    var shape = evt.target;
-    document.body.style.cursor = 'pointer';
-  });
+// foregroundLayer.on('mouseover', function(evt) {
+//     var shape = evt.target;
+//     document.body.style.cursor = 'pointer';
+//   });
   
-  foregroundLayer.on('mouseout', function() {
-    document.body.style.cursor = 'default';
-  });
+//   foregroundLayer.on('mouseout', function() {
+//     document.body.style.cursor = 'default';
+//   });
   
 
 
-foregroundLayer.on('click', function(evt) {
-    var shape = evt.target;
-    var filter = shape.filters()[0];
-    filter.hue(filter.hue() + 30);
-    foregroundLayer.draw();
-    // you can change the color of the image here
+// foregroundLayer.on('click', function(evt) {
+//     var shape = evt.target;
+//     // you can change the color of the image here
+// });
+
+stage.on('click', function(e) {
+    var node = e.target;
+    var isImage = (node.className === 'Image'); 
+    if (isImage) {
+        console.log(node.id());
+        console.log('X: ' + node.x());
+        console.log('Y: ' + node.y());
+    }
 });
 
 stage.draw();
+
+
+
 
 
 
