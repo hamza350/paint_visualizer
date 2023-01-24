@@ -162,62 +162,105 @@ maskCanvas.addEventListener("mousemove", function(event) {
     var x = event.clientX;
     var y = event.clientY;
     var ctx = maskCanvas.getContext("2d");
+    var mainCtx = canvas.getContext("2d");
     var pixelData = ctx.getImageData(x, y, 1, 1).data;
     console.log(pixelData);
     if(pixelData[3] == 26 && !isFirstLighter) {
         console.log('image1')
-        ctx.globalCompositeOperation = "source-in";
+        var ctx = canvas.getContext("2d");
+        var maskCtx = maskCanvas.getContext("2d");
+    
+        // Set the canvas size to match the image
+        canvas.width = image.width;
+        canvas.height = image.height;
+        maskCanvas.width = image.width;
+        maskCanvas.height = image.height;
+        maskCtx.globalAlpha = 0.1;
+        // Draw the mask data on the mask canvas
+        maskCtx.drawImage(maskData, 0, 0);
+        maskCtx.globalAlpha = 0.2;
+        maskCtx.drawImage(maskData1, 0, 0);
+    
+        // Set the composite operation of the main canvas to "source-in"
+        maskCtx.globalCompositeOperation = "source-in";
+    
+        // Draw the mask canvas on top of the main canvas
+        ctx.drawImage(maskCanvas, 0, 0);
         ctx.drawImage(image, 0, 0);
+
+
+
         for (let index = 0; index < 5; index++) {
-            ctx.globalCompositeOperation = "lighter";
-            ctx.drawImage(maskData, 0, 0); 
+            maskCtx.globalCompositeOperation = "lighter";
+            maskCtx.drawImage(maskData, 0, 0); 
         }
-        var exists = imagesHighlighted.filter(function (o) {
-            return o.hasOwnProperty('img1');
-        }).length > 0;
-        console.log(exists);
-        if(!exists) {
-            imagesHighlighted.push({img1: 'maskData'});
-        }
-        console.log(imagesHighlighted.length);
+        isFirstLighter = true;
+        isSecondLighter = false;
+        // var exists = imagesHighlighted.filter(function (o) {
+        //     return o.hasOwnProperty('img1');
+        // }).length > 0;
+        // console.log(exists);
+        // if(!exists) {
+        //     imagesHighlighted.push({img1: 'maskData'});
+        // }
         // if(imagesHighlighted.length > 0){
         //     for (let index = 0; index < imagesHighlighted.length; index++) {
         //         ctx.globalCompositeOperation = "lighter";
         //         ctx.drawImage(maskData, 0, 0);
         //     }
-            imagesHighlighted.pop({img2: 'maskData1'})
+            // imagesHighlighted.pop({img2: 'maskData1'})
         // }
-        isFirstLighter = true;
-        console.log('isFirstLighter');
-        console.log(isFirstLighter);
     }
 
 
     if(pixelData[3] == 51 && !isSecondLighter) {
         console.log('image2')
-        ctx.globalCompositeOperation = "source-in";
+        var ctx = canvas.getContext("2d");
+        var maskCtx = maskCanvas.getContext("2d");
+    
+        // Set the canvas size to match the image
+        canvas.width = image.width;
+        canvas.height = image.height;
+        maskCanvas.width = image.width;
+        maskCanvas.height = image.height;
+        maskCtx.globalAlpha = 0.1;
+        // Draw the mask data on the mask canvas
+        maskCtx.drawImage(maskData, 0, 0);
+        maskCtx.globalAlpha = 0.2;
+        maskCtx.drawImage(maskData1, 0, 0);
+    
+        // Set the composite operation of the main canvas to "source-in"
+        maskCtx.globalCompositeOperation = "source-in";
+    
+        // Draw the mask canvas on top of the main canvas
+        ctx.drawImage(maskCanvas, 0, 0);
         ctx.drawImage(image, 0, 0);
 
-        for (let index = 0; index < 4; index++) {
-            ctx.globalCompositeOperation = "lighter";
-            ctx.drawImage(maskData1, 0, 0); 
-        }
-        var exists = imagesHighlighted.filter(function (o) {
-            return o.hasOwnProperty('img2');
-        }).length > 0;
-        if(!exists) imagesHighlighted.push({img2: 'maskData1'})
-        if(imagesHighlighted.length > 0){
-            console.log(imagesHighlighted.length)
-            imagesHighlighted.pop({img1: 'maskData'});
-            
 
-            // ctx.globalCompositeOperation = "lighter";
-            // ctx.drawImage(maskData1, 0, 0);
-            // for (let index = 0; index < imagesHighlighted.length; index++) {
-                
-            // }
+
+
+
+        for (let index = 0; index < 4; index++) {
+            maskCtx.globalCompositeOperation = "lighter";
+            maskCtx.drawImage(maskData1, 0, 0); 
         }
         isSecondLighter = true;
+        isFirstLighter = false;
+        // var exists = imagesHighlighted.filter(function (o) {
+        //     return o.hasOwnProperty('img2');
+        // }).length > 0;
+        // if(!exists) imagesHighlighted.push({img2: 'maskData1'})
+        // if(imagesHighlighted.length > 0){
+        //     console.log(imagesHighlighted.length)
+        //     imagesHighlighted.pop({img1: 'maskData'});
+            
+
+        //     // ctx.globalCompositeOperation = "lighter";
+        //     // ctx.drawImage(maskData1, 0, 0);
+        //     // for (let index = 0; index < imagesHighlighted.length; index++) {
+                
+        //     // }
+        // }
     }
     // Object.values(imagesHighlighted[index])[0]
     // if(isLighter && pixelData[3] == 0 && !isCliked){
