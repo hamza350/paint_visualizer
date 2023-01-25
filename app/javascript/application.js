@@ -115,7 +115,7 @@ function hexToRgb(color) {
     maskCtx.globalCompositeOperation = "source-in";
 
     // Draw the mask canvas on top of the main canvas
-    ctx.drawImage(maskCanvas, 0, 0);
+    // ctx.drawImage(maskCanvas, 0, 0);
     ctx.drawImage(image, 0, 0);
 }
 
@@ -146,12 +146,14 @@ maskCanvas.addEventListener("click", function(event) {
                 pixels[i] = rgb.r; //red
                 pixels[i + 1] = rgb.g; //green
                 pixels[i + 2] = rgb.b; //blue
+                isFirstCliked = true;
             }
             if((pixels[i + 3] === 179) || (pixels[i] == prevColor.r && pixels[i + 1] == prevColor.g && 
                 pixels[i + 2] == prevColor.b)) {
                 pixels[i] = rgb.r; //red
                 pixels[i + 1] = rgb.g; //green
                 pixels[i + 2] = rgb.b; //blue
+                isSecondCliked = true;
             }
         }
         prevColor = rgb;
@@ -198,20 +200,6 @@ maskCanvas.addEventListener("mousemove", function(event) {
         }
         isFirstLighter = true;
         isSecondLighter = false;
-        // var exists = imagesHighlighted.filter(function (o) {
-        //     return o.hasOwnProperty('img1');
-        // }).length > 0;
-        // console.log(exists);
-        // if(!exists) {
-        //     imagesHighlighted.push({img1: 'maskData'});
-        // }
-        // if(imagesHighlighted.length > 0){
-        //     for (let index = 0; index < imagesHighlighted.length; index++) {
-        //         ctx.globalCompositeOperation = "lighter";
-        //         ctx.drawImage(maskData, 0, 0);
-        //     }
-            // imagesHighlighted.pop({img2: 'maskData1'})
-        // }
     }
 
     console.log(isSecondLighter)
@@ -219,24 +207,25 @@ maskCanvas.addEventListener("mousemove", function(event) {
         console.log('image2')
         var ctx = canvas.getContext("2d");
         var maskCtx = maskCanvas.getContext("2d");
-    
+        if(!isFirstCliked){
         // Set the canvas size to match the image
-        canvas.width = image.width;
-        canvas.height = image.height;
-        maskCanvas.width = image.width;
-        maskCanvas.height = image.height;
-        maskCtx.globalAlpha = 0.1;
-        // Draw the mask data on the mask canvas
-        maskCtx.drawImage(maskData, 0, 0);
-        maskCtx.globalAlpha = 0.2;
-        maskCtx.drawImage(maskData1, 0, 0);
-    
-        // Set the composite operation of the main canvas to "source-in"
-        maskCtx.globalCompositeOperation = "source-in";
-    
-        // Draw the mask canvas on top of the main canvas
-        ctx.drawImage(maskCanvas, 0, 0);
-        ctx.drawImage(image, 0, 0);
+            canvas.width = image.width;
+            canvas.height = image.height;
+            maskCanvas.width = image.width;
+            maskCanvas.height = image.height;
+            maskCtx.globalAlpha = 0.1;
+            // Draw the mask data on the mask canvas
+            maskCtx.drawImage(maskData, 0, 0);
+            maskCtx.globalAlpha = 0.2;
+            maskCtx.drawImage(maskData1, 0, 0);
+        
+            // Set the composite operation of the main canvas to "source-in"
+            maskCtx.globalCompositeOperation = "source-in";
+        
+            // Draw the mask canvas on top of the main canvas
+            ctx.drawImage(maskCanvas, 0, 0);
+            ctx.drawImage(image, 0, 0);
+        }
 
 
 
@@ -248,27 +237,40 @@ maskCanvas.addEventListener("mousemove", function(event) {
         }
         isSecondLighter = true;
         isFirstLighter = false;
-        // var exists = imagesHighlighted.filter(function (o) {
-        //     return o.hasOwnProperty('img2');
-        // }).length > 0;
-        // if(!exists) imagesHighlighted.push({img2: 'maskData1'})
-        // if(imagesHighlighted.length > 0){
-        //     console.log(imagesHighlighted.length)
-        //     imagesHighlighted.pop({img1: 'maskData'});
-            
-
-        //     // ctx.globalCompositeOperation = "lighter";
-        //     // ctx.drawImage(maskData1, 0, 0);
-        //     // for (let index = 0; index < imagesHighlighted.length; index++) {
-                
-        //     // }
-        // }
     }
     if(pixelData[3] == 0){
+        if(!isFirstCliked){
+            var ctx = canvas.getContext("2d");
+            var maskCtx = maskCanvas.getContext("2d");
+        
+            // Set the canvas size to match the image
+            canvas.width = image.width;
+            canvas.height = image.height;
+            maskCanvas.width = image.width;
+            maskCanvas.height = image.height;
+            maskCtx.globalAlpha = 0.1;
+            // Draw the mask data on the mask canvas
+            maskCtx.drawImage(maskData, 0, 0);
+            maskCtx.globalAlpha = 0.2;
+            maskCtx.drawImage(maskData1, 0, 0);
+        
+            // Set the composite operation of the main canvas to "source-in"
+            maskCtx.globalCompositeOperation = "source-in";
+        
+            // Draw the mask canvas on top of the main canvas
+            ctx.drawImage(maskCanvas, 0, 0);
+            ctx.drawImage(image, 0, 0);
+            isFirstLighter = false;
+            isSecondLighter = false;
+        }
+    }
+});
+    
+maskCanvas.addEventListener("mouseout", function() {
+// Change the composite operation back to "source-in" when the mouse leaves the canvas
+    if(!isFirstCliked){
         var ctx = canvas.getContext("2d");
         var maskCtx = maskCanvas.getContext("2d");
-    
-        // Set the canvas size to match the image
         canvas.width = image.width;
         canvas.height = image.height;
         maskCanvas.width = image.width;
@@ -278,41 +280,15 @@ maskCanvas.addEventListener("mousemove", function(event) {
         maskCtx.drawImage(maskData, 0, 0);
         maskCtx.globalAlpha = 0.2;
         maskCtx.drawImage(maskData1, 0, 0);
-    
+
         // Set the composite operation of the main canvas to "source-in"
         maskCtx.globalCompositeOperation = "source-in";
-    
+
         // Draw the mask canvas on top of the main canvas
         ctx.drawImage(maskCanvas, 0, 0);
         ctx.drawImage(image, 0, 0);
-        isFirstLighter = false;
-        isSecondLighter = false;
     }
 });
-    
-// maskCanvas.addEventListener("mouseout", function() {
-// // Change the composite operation back to "source-in" when the mouse leaves the canvas
-// var ctx = maskCanvas.getContext("2d");
-// var pixelData = ctx.getImageData(x, y, 1, 1).data;
-// if(pixelData[3] == 0) {
-//     ctx.globalCompositeOperation = "source-in";
-//     ctx.drawImage(maskData, 0, 0);
-// }
-//     isLighter = false;
-// });
-// var c1=document.getElementById("overlaycanvas");
-// var ctx1=c1.getContext("2d");
-// var imageObj2 = new Image();
-// imageObj2.src = "assets/2.png"
-// imageObj2.onload = function() {
-// ctx1.strokeStyle = 'yellow'
-// ctx1.lineWidth = 5;
-// ctx1.strokeRect(0, 0, 328, 526);
-//         //Here magic happend 
-// ctx1.globalCompositeOperation = "destination-in";
-// ctx1.drawImage(imageObj2, 0, 0, 328, 526);
-
-// };
 
 // c1.addEventListener("mousemove", function(event){
 //     var x = event.clientX;
