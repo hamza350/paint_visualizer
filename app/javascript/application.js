@@ -175,26 +175,18 @@ maskCanvas.addEventListener("click", function(event) {
     var pixelData = ctx.getImageData(x, y, 1, 1).data;
     // Check if the pixel at the click coordinates is part of the first image
         // Get the image data of the entire canvas
-    var imageData = ctx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+    var imageData = ctx.getImageData(0, 0, maskData.width, maskData1.height);
     var pixels = imageData.data;
     if(!hex) alert('please select color first')
     var rgb = hexToRgb(hex);
-    console.log(pixelData)
-    console.log(firstImageColor)
-    console.log(secondImageColor)
-
-    console.log(firstImageColor && (firstImageColor.r == pixelData[0] || firstImageColor.r == pixelData[0] + 1 || firstImageColor.r == pixelData[0] - 1)  && 
-    (firstImageColor.g == pixelData[1] || firstImageColor.g == pixelData[1] - 1  || firstImageColor.g == pixelData[1] + 1) && (firstImageColor.b == pixelData[2] || firstImageColor.b == pixelData[2] - 1 ||
-        firstImageColor.b == pixelData[2] + 1))
-         
-    console.log(secondImageColor && (secondImageColor.r == pixelData[0] || secondImageColor.r == pixelData[0] + 1 || secondImageColor.r == pixelData[0] - 1)  && 
-    (secondImageColor.g == pixelData[1] || secondImageColor.g == pixelData[1] - 1 || secondImageColor.g == pixelData[1] + 1) && (secondImageColor.b == pixelData[2] || secondImageColor.b == pixelData[2] - 1 ||
-        secondImageColor.b == pixelData[2] + 1)) 
+    // console.log(pixelData)
+    // console.log(firstImageColor)
+    // console.log(secondImageColor)
 
 
     if(firstImageColor && (firstImageColor.r == pixelData[0] || firstImageColor.r == pixelData[0] + 1 || firstImageColor.r == pixelData[0] - 1)  && 
     (firstImageColor.g == pixelData[1] || firstImageColor.g == pixelData[1] - 1 || firstImageColor.g == pixelData[1] + 1) && (firstImageColor.b == pixelData[2] || firstImageColor.b == pixelData[2] - 1 ||
-        firstImageColor.b == pixelData[2] + 1)){
+        firstImageColor.b == pixelData[2] + 1) && pixelData[3] == 179 ){
         firstImageColor.r = rgb.r;
         firstImageColor.g = rgb.g;
         firstImageColor.b = rgb.b;
@@ -202,15 +194,14 @@ maskCanvas.addEventListener("click", function(event) {
 
     if(secondImageColor && (secondImageColor.r == pixelData[0] || secondImageColor.r == pixelData[0] + 1 || secondImageColor.r == pixelData[0] - 1)  && 
     (secondImageColor.g == pixelData[1] || secondImageColor.g == pixelData[1] - 1 || secondImageColor.g == pixelData[1] + 1) && (secondImageColor.b == pixelData[2] || secondImageColor.b == pixelData[2] - 1 ||
-        secondImageColor.b == pixelData[2] + 1)){
+        secondImageColor.b == pixelData[2] + 1) && pixelData[3] == 153 ){
         secondImageColor.r = rgb.r;
         secondImageColor.g = rgb.g;
         secondImageColor.b = rgb.b;
     }
 
+   
     for (var i = 0; i < pixels.length; i += 4) {
-       
-            console.log('else')
             if((pixels[i + 3] === 179) && !firstImageColor && !isSecondCliked) {
                 // console.log('wall block')
                 pixels[i] = rgb.r; //red
@@ -240,10 +231,12 @@ maskCanvas.addEventListener("click", function(event) {
                 pixels[i + 1] = secondImageColor.g; //green
                 pixels[i + 2] = secondImageColor.b; //blue
             }
-        // }
     }
+    
     if(isSecondCliked) secondImageColor = {r: rgb.r, g: rgb.g, b: rgb.b};
     if(isFirstCliked) firstImageColor = {r: rgb.r, g: rgb.g, b: rgb.b};
+    console.log(firstImageColor)
+    console.log(secondImageColor)
     isFirstCliked = false;
     isSecondCliked = false;
     prevColor = rgb;
@@ -378,6 +371,39 @@ maskCanvas.addEventListener("mouseout", function() {
         isSecondLighter = false;
         isFirstLighter = false;
     }
+    // else if(firstImageColor && !secondImageColor){
+    //     // Set the canvas size to match the image
+    //         var ctx = canvas.getContext("2d");
+    //         var maskCtx = maskCanvas.getContext("2d");
+    //         canvas.width = image.width;
+    //         canvas.height = image.height;
+    //         maskCanvas.width = image.width;
+    //         maskCanvas.height = image.height;
+    //         for (let index = 0; index < 3; index++) {
+    //             maskCtx.globalCompositeOperation = "lighter";
+    //             maskCtx.drawImage(maskData, 0, 0); 
+    //         }
+    //         maskCtx.globalAlpha = 0.2;
+    //         maskCtx.drawImage(maskData1, 0, 0);
+
+    //         // Set the composite operation of the main canvas to "source-in"
+    //         maskCtx.globalCompositeOperation = "source-in";
+    //         ctx.drawImage(image, 0, 0);
+
+    //         debugger
+    //         var imageData = maskCtx.getImageData(0, 0, maskData.width, maskData1.height);
+    //         var pixels = imageData.data;
+    //         for (var i = 0; i < pixels.length; i += 4) {
+    //             if((pixels[i + 3] === 26) && firstImageColor) {
+    //                 debugger
+    //                 // console.log('wall block')
+    //                 pixels[i] = 139; //red
+    //                 pixels[i + 1] = 0; //green
+    //                 pixels[i + 2] = 0; //blue
+    //             }
+    //         }
+    //         maskCtx.putImageData(imageData, 0, 0);
+    // }
 });
 
 // c1.addEventListener("mousemove", function(event){
