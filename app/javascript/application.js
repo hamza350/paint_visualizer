@@ -251,7 +251,6 @@ maskCanvas.addEventListener("mousemove", function(event) {
     var ctx = maskCanvas.getContext("2d");
     var mainCtx = canvas.getContext("2d");
     var pixelData = ctx.getImageData(x, y, 1, 1).data;
-    // console.log(pixelData);
     if(pixelData[3] == 26 && !isFirstLighter) {
         console.log('image1')
         var ctx = canvas.getContext("2d");
@@ -371,39 +370,6 @@ maskCanvas.addEventListener("mouseout", function() {
         isSecondLighter = false;
         isFirstLighter = false;
     }
-    // else if(firstImageColor && !secondImageColor){
-    //     // Set the canvas size to match the image
-    //         var ctx = canvas.getContext("2d");
-    //         var maskCtx = maskCanvas.getContext("2d");
-    //         canvas.width = image.width;
-    //         canvas.height = image.height;
-    //         maskCanvas.width = image.width;
-    //         maskCanvas.height = image.height;
-    //         for (let index = 0; index < 3; index++) {
-    //             maskCtx.globalCompositeOperation = "lighter";
-    //             maskCtx.drawImage(maskData, 0, 0); 
-    //         }
-    //         maskCtx.globalAlpha = 0.2;
-    //         maskCtx.drawImage(maskData1, 0, 0);
-
-    //         // Set the composite operation of the main canvas to "source-in"
-    //         maskCtx.globalCompositeOperation = "source-in";
-    //         ctx.drawImage(image, 0, 0);
-
-    //         debugger
-    //         var imageData = maskCtx.getImageData(0, 0, maskData.width, maskData1.height);
-    //         var pixels = imageData.data;
-    //         for (var i = 0; i < pixels.length; i += 4) {
-    //             if((pixels[i + 3] === 26) && firstImageColor) {
-    //                 debugger
-    //                 // console.log('wall block')
-    //                 pixels[i] = 139; //red
-    //                 pixels[i + 1] = 0; //green
-    //                 pixels[i + 2] = 0; //blue
-    //             }
-    //         }
-    //         maskCtx.putImageData(imageData, 0, 0);
-    // }
 });
 
 // c1.addEventListener("mousemove", function(event){
