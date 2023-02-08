@@ -335,8 +335,7 @@ maskCanvas.addEventListener("mousemove", function(event) {
             isSecondLighter = false;
         }
 
-
-        if(firstImageColor){
+        if (firstImageColor || secondImageColor){
             var ctx = canvas.getContext("2d");
             var maskCtx = maskCanvas.getContext("2d");
         
@@ -354,8 +353,29 @@ maskCanvas.addEventListener("mousemove", function(event) {
             // Set the composite operation of the main canvas to "source-in"
             maskCtx.globalCompositeOperation = "source-over";
             ctx.drawImage(image, 0, 0);
-    
-    
+        }
+        
+        // color again the image two if color exists
+        if(secondImageColor){            
+            for (let index = 0; index < 2; index++) {
+                maskCtx.globalCompositeOperation = "lighter";
+                maskCtx.drawImage(maskData1, 0, 0); 
+            }
+        
+            var imageData = maskCtx.getImageData(0, 0, maskData1.width, maskData1.height);
+            var pixels = imageData.data;
+            
+            for (var i = 0; i < pixels.length; i += 4) {
+                if((pixels[i + 3] === 153)) {
+                    pixels[i] = secondImageColor.r; //red
+                    pixels[i + 1] = secondImageColor.g; //green
+                    pixels[i + 2] = secondImageColor.b; //blue
+                }
+            }
+            maskCtx.putImageData(imageData, 0, 0);
+        }
+
+        if(firstImageColor){
             for (let index = 0; index < 3; index++) {
                 maskCtx.globalCompositeOperation = "lighter";
                 maskCtx.drawImage(maskData, 0, 0); 
@@ -370,45 +390,6 @@ maskCanvas.addEventListener("mousemove", function(event) {
                     pixels[i] = firstImageColor.r; //red
                     pixels[i + 1] = firstImageColor.g; //green
                     pixels[i + 2] = firstImageColor.b; //blue
-                }
-            }
-            maskCtx.putImageData(imageData, 0, 0);
-        }
-
-         // color again the image two if color exists
-        if(secondImageColor){
-            var ctx = canvas.getContext("2d");
-            var maskCtx = maskCanvas.getContext("2d");
-        
-            // Set the canvas size to match the image
-            canvas.width = image.width;
-            canvas.height = image.height;
-            maskCanvas.width = image.width;
-            maskCanvas.height = image.height;
-            maskCtx.globalAlpha = 0.1;
-            // // Draw the mask data on the mask canvas
-            maskCtx.drawImage(maskData, 0, 0);
-            maskCtx.globalAlpha = 0.2;
-            maskCtx.drawImage(maskData1, 0, 0);
-        
-            // Set the composite operation of the main canvas to "source-in"
-            maskCtx.globalCompositeOperation = "source-over";
-            ctx.drawImage(image, 0, 0);
-
-
-            for (let index = 0; index < 2; index++) {
-                maskCtx.globalCompositeOperation = "lighter";
-                maskCtx.drawImage(maskData1, 0, 0); 
-            }
-        
-            var imageData = maskCtx.getImageData(0, 0, maskData1.width, maskData1.height);
-            var pixels = imageData.data;
-        
-            for (var i = 0; i < pixels.length; i += 4) {
-                if((pixels[i + 3] === 153)) {
-                    pixels[i] = secondImageColor.r; //red
-                    pixels[i + 1] = secondImageColor.g; //green
-                    pixels[i + 2] = secondImageColor.b; //blue
                 }
             }
             maskCtx.putImageData(imageData, 0, 0);
@@ -440,8 +421,8 @@ maskCanvas.addEventListener("mouseout", function() {
         isSecondLighter = false;
         isFirstLighter = false;
     }
-    //coloring on move out
-    if(firstImageColor){
+
+    if (firstImageColor || secondImageColor){
         var ctx = canvas.getContext("2d");
         var maskCtx = maskCanvas.getContext("2d");
     
@@ -459,8 +440,29 @@ maskCanvas.addEventListener("mouseout", function() {
         // Set the composite operation of the main canvas to "source-in"
         maskCtx.globalCompositeOperation = "source-over";
         ctx.drawImage(image, 0, 0);
+    }
+    
+    // color again the image two if color exists
+    if(secondImageColor){            
+        for (let index = 0; index < 2; index++) {
+            maskCtx.globalCompositeOperation = "lighter";
+            maskCtx.drawImage(maskData1, 0, 0); 
+        }
+    
+        var imageData = maskCtx.getImageData(0, 0, maskData1.width, maskData1.height);
+        var pixels = imageData.data;
+        
+        for (var i = 0; i < pixels.length; i += 4) {
+            if((pixels[i + 3] === 153)) {
+                pixels[i] = secondImageColor.r; //red
+                pixels[i + 1] = secondImageColor.g; //green
+                pixels[i + 2] = secondImageColor.b; //blue
+            }
+        }
+        maskCtx.putImageData(imageData, 0, 0);
+    }
 
-
+    if(firstImageColor){
         for (let index = 0; index < 3; index++) {
             maskCtx.globalCompositeOperation = "lighter";
             maskCtx.drawImage(maskData, 0, 0); 
@@ -475,45 +477,6 @@ maskCanvas.addEventListener("mouseout", function() {
                 pixels[i] = firstImageColor.r; //red
                 pixels[i + 1] = firstImageColor.g; //green
                 pixels[i + 2] = firstImageColor.b; //blue
-            }
-        }
-        maskCtx.putImageData(imageData, 0, 0);
-    }
-
-     // color again the image two if color exists
-    if(secondImageColor){
-        var ctx = canvas.getContext("2d");
-        var maskCtx = maskCanvas.getContext("2d");
-    
-        // Set the canvas size to match the image
-        canvas.width = image.width;
-        canvas.height = image.height;
-        maskCanvas.width = image.width;
-        maskCanvas.height = image.height;
-        maskCtx.globalAlpha = 0.1;
-        // // Draw the mask data on the mask canvas
-        maskCtx.drawImage(maskData, 0, 0);
-        maskCtx.globalAlpha = 0.2;
-        maskCtx.drawImage(maskData1, 0, 0);
-    
-        // Set the composite operation of the main canvas to "source-in"
-        maskCtx.globalCompositeOperation = "source-over";
-        ctx.drawImage(image, 0, 0);
-
-
-        for (let index = 0; index < 2; index++) {
-            maskCtx.globalCompositeOperation = "lighter";
-            maskCtx.drawImage(maskData1, 0, 0); 
-        }
-    
-        var imageData = maskCtx.getImageData(0, 0, maskData1.width, maskData1.height);
-        var pixels = imageData.data;
-    
-        for (var i = 0; i < pixels.length; i += 4) {
-            if((pixels[i + 3] === 153)) {
-                pixels[i] = secondImageColor.r; //red
-                pixels[i + 1] = secondImageColor.g; //green
-                pixels[i + 2] = secondImageColor.b; //blue
             }
         }
         maskCtx.putImageData(imageData, 0, 0);
