@@ -6,35 +6,7 @@ import "controllers"
 // let overlays= [];
 let hex;
 let colors=[];
-// document.querySelectorAll('#product-a, #product-b, #product-c').forEach(function(path) {
-//   path.onclick = chooseProduct;
-// })
 
-// document.querySelectorAll('#product-a, #product-b, #product-c').forEach(function(path) {
-//     path.onmouseover = hoverProduct;
-// })
-
-// document.querySelectorAll('#product-a, #product-b, #product-c').forEach(function(path) {
-//     path.onmouseout = removeHoverProduct;
-// })
-
-// function removeHoverProduct(e) {
-//     if (overlays)  for (const overlay of overlays) { overlay.classList.remove('highlight') }
-// }
-
-// function hoverProduct(e) {
-//     if (overlays)  for (const overlay of overlays) { overlay.classList.remove('highlight') }
-//     overlays = document.querySelectorAll("[id=" + e.target.id + "]");
-//     for (const overlay of overlays) { overlay.classList.add('highlight') }
-// }
-
-// function chooseProduct(e) {
-//   if (overlays)  for (const overlay of overlays) { overlay.classList.remove('highlight') }
-//   overlays = document.querySelectorAll("[id=" + e.target.id + "]");
-//   for (const overlay of overlays) { overlay.classList.add('highlight') }
-//   if (!hex) { alert('Please choose color first')}
-//   if (overlays ) for (const overlay of overlays) { overlay.style.fill = hex }
-// }
 
 
 colors = document.getElementsByClassName("color");
@@ -113,10 +85,27 @@ function hexToRgb(color) {
 
     // Set the composite operation of the main canvas to "source-in"
     maskCtx.globalCompositeOperation = "source-over";
-
+    ctx.drawImage(image, 0, 0);
     // Draw the mask canvas on top of the main canvas
     // ctx.drawImage(maskCanvas, 0, 0);
-    ctx.drawImage(image, 0, 0);
+
+    // for (let index = 0; index < 3; index++) {
+    //     maskCtx.globalCompositeOperation = "lighter";
+    //     maskCtx.drawImage(maskData, 0, 0); 
+    // }
+
+    // var imageData = maskCtx.getImageData(0, 0, maskData.width, maskData.height);
+    // var pixels = imageData.data;
+
+    // for (var i = 0; i < pixels.length; i += 4) {
+    //     if((pixels[i + 3] === 179)) {
+    //         // console.log('wall block')
+    //         pixels[i] = 139; //red
+    //         pixels[i + 1] = 0; //green
+    //         pixels[i + 2] = 0; //blue
+    //     }
+    // }
+    // maskCtx.putImageData(imageData, 0, 0);
 }
 
 var isFirstLighter = false;
@@ -200,7 +189,6 @@ maskCanvas.addEventListener("click", function(event) {
         secondImageColor.b = rgb.b;
     }
 
-   
     for (var i = 0; i < pixels.length; i += 4) {
             if((pixels[i + 3] === 179) && !firstImageColor && !isSecondCliked) {
                 // console.log('wall block')
@@ -251,12 +239,13 @@ maskCanvas.addEventListener("mousemove", function(event) {
     var ctx = maskCanvas.getContext("2d");
     var mainCtx = canvas.getContext("2d");
     var pixelData = ctx.getImageData(x, y, 1, 1).data;
-    if(pixelData[3] == 26 && !isFirstLighter) {
-        console.log('image1')
+    console.log('image1')
+    console.log(isFirstLighter)
+    console.log(pixelData[3])
+    if((pixelData[3] == 26 || pixelData[3] == 179) && !isFirstLighter) {
         var ctx = canvas.getContext("2d");
         var maskCtx = maskCanvas.getContext("2d");
-    
-        if(!secondImageColor){
+        // if(!secondImageColor){
             // Set the canvas size to match the image
             canvas.width = image.width;
             canvas.height = image.height;
@@ -274,23 +263,46 @@ maskCanvas.addEventListener("mousemove", function(event) {
             // Draw the mask canvas on top of the main canvas
             ctx.drawImage(maskCanvas, 0, 0);
             ctx.drawImage(image, 0, 0);
-        }
+
+        // }
+
+
 
         for (let index = 0; index < 3; index++) {
             maskCtx.globalCompositeOperation = "lighter";
             maskCtx.fillStyle = "red";
             maskCtx.drawImage(maskData, 0, 0); 
         }
+
+        if(secondImageColor){
+            for (let index = 0; index < 2; index++) {
+                maskCtx.globalCompositeOperation = "lighter";
+                maskCtx.drawImage(maskData1, 0, 0); 
+            }
+        
+            var imageData = maskCtx.getImageData(0, 0, maskData1.width, maskData1.height);
+            var pixels = imageData.data;
+        
+            for (var i = 0; i < pixels.length; i += 4) {
+                if((pixels[i + 3] === 153)) {
+                    // console.log('wall block')
+                    pixels[i] = secondImageColor.r; //red
+                    pixels[i + 1] = secondImageColor.g; //green
+                    pixels[i + 2] = secondImageColor.b; //blue
+                }
+            }
+            maskCtx.putImageData(imageData, 0, 0);
+        }
         isFirstLighter = true;
         isSecondLighter = false;
     }
 
     console.log('isSecondlighter'+isSecondLighter)
-    if(pixelData[3] == 51 && !isSecondLighter) {
+    if((pixelData[3] == 51 || pixelData[3] == 153) && !isSecondLighter) {
         console.log('image2')
         var ctx = canvas.getContext("2d");
         var maskCtx = maskCanvas.getContext("2d");
-        if(!firstImageColor){
+        // if(!firstImageColor){
         // Set the canvas size to match the image
             canvas.width = image.width;
             canvas.height = image.height;
@@ -308,18 +320,43 @@ maskCanvas.addEventListener("mousemove", function(event) {
             // Draw the mask canvas on top of the main canvas
             ctx.drawImage(maskCanvas, 0, 0);
             ctx.drawImage(image, 0, 0);
-        }
+        // }
 
-
+       
         for (let index = 0; index < 2; index++) {
             maskCtx.globalCompositeOperation = "lighter";
             maskCtx.drawImage(maskData1, 0, 0); 
         }
+
+        if(firstImageColor){
+            for (let index = 0; index < 3; index++) {
+                maskCtx.globalCompositeOperation = "lighter";
+                maskCtx.drawImage(maskData, 0, 0); 
+            }
+        
+            var imageData = maskCtx.getImageData(0, 0, maskData.width, maskData.height);
+            var pixels = imageData.data;
+        
+            for (var i = 0; i < pixels.length; i += 4) {
+                if((pixels[i + 3] === 179)) {
+                    pixels[i] = firstImageColor.r; //red
+                    pixels[i + 1] = firstImageColor.g; //green
+                    pixels[i + 2] = firstImageColor.b; //blue
+                }
+            }
+            maskCtx.putImageData(imageData, 0, 0);
+        }
+
         isSecondLighter = true;
         isFirstLighter = false;
     }
+
+
+    // when mouse is not on image 1 or image 2 
     if(pixelData[3] == 0){
+        console.log('inside 1')
         if(!firstImageColor && !secondImageColor){
+            console.log('inside 2')
             var ctx = canvas.getContext("2d");
             var maskCtx = maskCanvas.getContext("2d");
         
@@ -342,6 +379,87 @@ maskCanvas.addEventListener("mousemove", function(event) {
             ctx.drawImage(image, 0, 0);
             isFirstLighter = false;
             isSecondLighter = false;
+        }
+
+        // color again the image one if color exists
+        if(firstImageColor){
+            console.log('inside 3')
+            var ctx = canvas.getContext("2d");
+            var maskCtx = maskCanvas.getContext("2d");
+        
+            // Set the canvas size to match the image
+            canvas.width = image.width;
+            canvas.height = image.height;
+            maskCanvas.width = image.width;
+            maskCanvas.height = image.height;
+            maskCtx.globalAlpha = 0.1;
+            // // Draw the mask data on the mask canvas
+            maskCtx.drawImage(maskData, 0, 0);
+            maskCtx.globalAlpha = 0.2;
+            maskCtx.drawImage(maskData1, 0, 0);
+        
+            // Set the composite operation of the main canvas to "source-in"
+            maskCtx.globalCompositeOperation = "source-over";
+            ctx.drawImage(image, 0, 0);
+
+
+            for (let index = 0; index < 3; index++) {
+                maskCtx.globalCompositeOperation = "lighter";
+                maskCtx.drawImage(maskData, 0, 0); 
+            }
+        
+            var imageData = maskCtx.getImageData(0, 0, maskData.width, maskData.height);
+            var pixels = imageData.data;
+        
+            for (var i = 0; i < pixels.length; i += 4) {
+                if((pixels[i + 3] === 179)) {
+                    // console.log('wall block')
+                    pixels[i] = firstImageColor.r; //red
+                    pixels[i + 1] = firstImageColor.g; //green
+                    pixels[i + 2] = firstImageColor.b; //blue
+                }
+            }
+            maskCtx.putImageData(imageData, 0, 0);
+        }
+
+         // color again the image two if color exists
+        if(secondImageColor){
+            console.log('inside 4')
+            var ctx = canvas.getContext("2d");
+            var maskCtx = maskCanvas.getContext("2d");
+        
+            // Set the canvas size to match the image
+            canvas.width = image.width;
+            canvas.height = image.height;
+            maskCanvas.width = image.width;
+            maskCanvas.height = image.height;
+            maskCtx.globalAlpha = 0.1;
+            // // Draw the mask data on the mask canvas
+            maskCtx.drawImage(maskData, 0, 0);
+            maskCtx.globalAlpha = 0.2;
+            maskCtx.drawImage(maskData1, 0, 0);
+        
+            // Set the composite operation of the main canvas to "source-in"
+            maskCtx.globalCompositeOperation = "source-over";
+            ctx.drawImage(image, 0, 0);
+
+
+            for (let index = 0; index < 2; index++) {
+                maskCtx.globalCompositeOperation = "lighter";
+                maskCtx.drawImage(maskData1, 0, 0); 
+            }
+        
+            var imageData = maskCtx.getImageData(0, 0, maskData1.width, maskData1.height);
+            var pixels = imageData.data;
+        
+            for (var i = 0; i < pixels.length; i += 4) {
+                if((pixels[i + 3] === 153)) {
+                    pixels[i] = secondImageColor.r; //red
+                    pixels[i + 1] = secondImageColor.g; //green
+                    pixels[i + 2] = secondImageColor.b; //blue
+                }
+            }
+            maskCtx.putImageData(imageData, 0, 0);
         }
     }
 });
