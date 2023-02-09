@@ -49,11 +49,11 @@ function hexToRgb(color) {
   maskCanvas.style.cursor = 'grab';  
   // Create new Image objects
   var image = new Image();
-  image.src = "assets/1.jpg";
+  image.src = "assets/check_main.png";
   var maskData = new Image();
-  maskData.src = "assets/2.png";
+  maskData.src = "assets/check1.png";
   var maskData1 = new Image();
-  maskData1.src = "assets/3.png";
+  maskData1.src = "assets/middle_image.png";
 
   // Wait for the image and mask data to load
   image.onload = maskData.onload = maskData1.onload = function() {
@@ -201,6 +201,7 @@ maskCanvas.addEventListener("mousemove", function(event) {
     var ctx = maskCanvas.getContext("2d");
     var mainCtx = canvas.getContext("2d");
     var pixelData = ctx.getImageData(x, y, 1, 1).data;
+
     
     if((pixelData[3] == 26 || pixelData[3] == 179)) {
         var ctx = canvas.getContext("2d");
