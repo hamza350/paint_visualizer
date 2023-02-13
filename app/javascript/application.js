@@ -1,154 +1,165 @@
 // Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
+// Two values one the folder name and the second is number of images 
+
 import "@hotwired/turbo-rails"
 import "controllers"
+ 
+window.buildCanvas = function (id) {
 
-var canvas = document.getElementById("overlaycanvas");
-var ctx = canvas.getContext("2d");
-let hex;
-let colors=[];
-let prevColor = {};
-
-
-
-var image = new Image();
-image.src = "assets/paint/main.png";
-image.onload = function() {
-    canvas.width = image.width;
-    canvas.height = image.height;
-    ctx.drawImage(image, 0, 0);
-}
-
-for (var i=0; i < 6; i++){
-    window['image'+i] = new Image();
-    eval("image" + i + '.src = ' + "'assets/paint/" + i + ".png';")
-    window['offscreenCanvas' + i] = new OffscreenCanvas(window['image'+i].width, window['image'+i].height);
-    window['offscreenContext' + i] = window['offscreenCanvas' + i].getContext("2d");
-}
+  var canvas = document.getElementById("overlaycanvas");
+  var ctx = canvas.getContext("2d");
+  let hex;
+  let colors=[];
+  let prevColor = {};
+  let imagesCount;
 
 
-
-function changeColor(e) {
-    if (hex) for (const color of colors) { color.classList.remove('checkmark') }
-    hex = e.target.getAttribute("data-hex");
-    e.target.classList.add('checkmark')
-  // //   if (overlays ) for (const overlay of overlays) { overlay.style.fill = hex }
-}
-
-colors = document.getElementsByClassName("color");
-for (var i = 0; i < colors.length; i++) {
-  colors[i].onclick = changeColor;
-}
-
-function hexToRgb(color) {
-    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    color = color.replace(shorthandRegex, function(m, r, g, b) {
-        return r + r + g + g + b + b;
-    });
-
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : {
-        r: 0,
-        g: 0,
-        b: 0
-    };
-}
-
-canvas.addEventListener("mousemove", function(event) {
-  var x = event.clientX - canvas.offsetLeft;
-  var y = event.clientY - canvas.offsetTop;
-  var pixelData = ctx.getImageData(x, y, 1, 1).data;
-  var [r, g, b, a] = pixelData;
-  var check_present = true;
-
-  for (var i=0; i < 6; i++){
-    window['pixelData'+i] = window['offscreenContext' + i].getImageData(x, y, 1, 1).data;
-    window['offscreenContext' + i].drawImage(window['image'+i], 0, 0);
-    if (window['pixelData'+i][3] == 255){
-        if (prevColor['image'+i] === undefined){
-            ctx.globalCompositeOperation = "source-over";
-            ctx.drawImage(window['image'+i], 0, 0);
-        }
-        else{
-            var prevColorPixel = prevColor['image'+i]['pixel'];
-            for (var i = 0; i < prevColorPixel.length; i += 4) {
-                ctx.fillStyle = 'blue';
-                ctx.fillRect(prevColorPixel[i]['x'], prevColorPixel[i]['y'], 1, 1);
-            }
-        }
-        check_present = false;
-        break;
-    }
+  if(id == 'One'){
+    imagesCount = 9;
+  }else if(id == 'Two'){
+    imagesCount = 2;
   }
 
-  if (check_present){
-    ctx.drawImage(image, 0, 0);
-    fillColorCanvas()
+  var image = new Image();
+  image.src = 'assets/' + id + '/main.png';
+  image.onload = function() {
+      canvas.width = image.width;
+      canvas.height = image.height;
+      ctx.drawImage(image, 0, 0);
   }
-});
 
-canvas.addEventListener("click", function(event) {
-    console.log("hamza")
+  for (var i=0; i < imagesCount; i++){
+      console.log(id)
+      window['image'+i] = new Image();
+      eval("image" + i + '.src = ' + `'assets/${id}/` + i + ".png';")
+      window['offscreenCanvas' + i] = new OffscreenCanvas(window['image'+i].width, window['image'+i].height);
+      window['offscreenContext' + i] = window['offscreenCanvas' + i].getContext("2d");
+  }
+
+  function changeColor(e) {
+      if (hex) for (const color of colors) { color.classList.remove('checkmark') }
+      hex = e.target.getAttribute("data-hex");
+      e.target.classList.add('checkmark')
+    // //   if (overlays ) for (const overlay of overlays) { overlay.style.fill = hex }
+  }
+
+  colors = document.getElementsByClassName("color");
+  for (var i = 0; i < colors.length; i++) {
+    colors[i].onclick = changeColor;
+  }
+
+  function hexToRgb(color) {
+      var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+      color = color.replace(shorthandRegex, function(m, r, g, b) {
+          return r + r + g + g + b + b;
+      });
+
+      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
+      return result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+      } : {
+          r: 0,
+          g: 0,
+          b: 0
+      };
+  }
+
+  canvas.addEventListener("mousemove", function(event) {
     var x = event.clientX - canvas.offsetLeft;
     var y = event.clientY - canvas.offsetTop;
     var pixelData = ctx.getImageData(x, y, 1, 1).data;
     var [r, g, b, a] = pixelData;
     var check_present = true;
-  
-    for (var i=0; i < 6; i++){
-      var currentCanvas = 'offscreenCanvas' + i
-      var contextCanvas = 'offscreenContext' + i
-      var pixelData = 'pixelData' + i
-      window[pixelData] = window[contextCanvas].getImageData(x, y, 1, 1).data;
-      window[contextCanvas].drawImage(window['image'+i], 0, 0);
 
-      if (window[pixelData][3] == 255){
-          check_present = false;
-          var imageData = window[contextCanvas].getImageData(0, 0, window[currentCanvas].width, window[currentCanvas].height);
-          var data = imageData.data;
-          ctx.drawImage(image, 0, 0);
-          console.log(hex)
-          if(!hex) alert('please select color first')
-          var rgb = hexToRgb(hex);
-          var blackPixels = [];
-          for (let y = 0; y < window[currentCanvas].height; y++) {
-            for (let x = 0; x < window[currentCanvas].width; x++) {
-              const index = (y * window[currentCanvas].width + x) * 4;
-              if (data[index + 3] === 255) {
-                blackPixels.push({ x, y });
+    for (var i=0; i < imagesCount; i++){
+      window['pixelData'+i] = window['offscreenContext' + i].getImageData(x, y, 1, 1).data;
+      window['offscreenContext' + i].drawImage(window['image'+i], 0, 0);
+      if (window['pixelData'+i][3] == 255){
+          if (prevColor['image'+i] === undefined){
+              ctx.globalCompositeOperation = "source-over";
+              ctx.drawImage(window['image'+i], 0, 0);
+          }
+          else{
+              var prevColorPixel = prevColor['image'+i]['pixel'];
+              for (var i = 0; i < prevColorPixel.length; i += 4) {
+                  ctx.fillStyle = 'blue';
+                  ctx.fillRect(prevColorPixel[i]['x'], prevColorPixel[i]['y'], 1, 1);
               }
-            }
           }
-          var imageName = "image" + i;
-          if (prevColor[imageName] === undefined){
-            prevColor[imageName] = {pixel: blackPixels, color: hex}
-          }
-          else
-          {
-            prevColor[imageName]['color'] = hex;
-          }
-          fillColorCanvas()
+          check_present = false;
           break;
       }
     }
-  
+
     if (check_present){
       ctx.drawImage(image, 0, 0);
+      fillColorCanvas()
     }
-});
+  });
 
-function fillColorCanvas(){
-    Object.keys(prevColor).forEach(function (key) {
-        var prevColorPixel = prevColor[key]['pixel'];
-        for (var i = 0; i < prevColorPixel.length; i += 4) {
-            ctx.fillStyle = prevColor[key]['color'];
-            ctx.fillRect(prevColorPixel[i]['x'], prevColorPixel[i]['y'], 4, 4);
+  canvas.addEventListener("click", function(event) {
+      console.log("hamza")
+      var x = event.clientX - canvas.offsetLeft;
+      var y = event.clientY - canvas.offsetTop;
+      var pixelData = ctx.getImageData(x, y, 1, 1).data;
+      var [r, g, b, a] = pixelData;
+      var check_present = true;
+    
+      for (var i=0; i < imagesCount; i++){
+        var currentCanvas = 'offscreenCanvas' + i
+        var contextCanvas = 'offscreenContext' + i
+        var pixelData = 'pixelData' + i
+        window[pixelData] = window[contextCanvas].getImageData(x, y, 1, 1).data;
+        window[contextCanvas].drawImage(window['image'+i], 0, 0);
+
+        if (window[pixelData][3] == 255){
+            check_present = false;
+            var imageData = window[contextCanvas].getImageData(0, 0, window[currentCanvas].width, window[currentCanvas].height);
+            var data = imageData.data;
+            ctx.drawImage(image, 0, 0);
+            console.log(hex)
+            if(!hex) alert('please select color first')
+            var rgb = hexToRgb(hex);
+            var blackPixels = [];
+            for (let y = 0; y < window[currentCanvas].height; y++) {
+              for (let x = 0; x < window[currentCanvas].width; x++) {
+                const index = (y * window[currentCanvas].width + x) * 4;
+                if (data[index + 3] === 255) {
+                  blackPixels.push({ x, y });
+                }
+              }
+            }
+            var imageName = "image" + i;
+            if (prevColor[imageName] === undefined){
+              prevColor[imageName] = {pixel: blackPixels, color: hex}
+            }
+            else
+            {
+              prevColor[imageName]['color'] = hex;
+            }
+            fillColorCanvas()
+            break;
         }
-    })
-} 
+      }
+    
+      if (check_present){
+        ctx.drawImage(image, 0, 0);
+      }
+  });
+
+  function fillColorCanvas(){
+      Object.keys(prevColor).forEach(function (key) {
+          var prevColorPixel = prevColor[key]['pixel'];
+          for (var i = 0; i < prevColorPixel.length; i += 4) {
+              ctx.fillStyle = prevColor[key]['color'];
+              ctx.fillRect(prevColorPixel[i]['x'], prevColorPixel[i]['y'], 4, 4);
+          }
+      })
+  } 
+
+}
 
 
 // const image1 = new Image();
